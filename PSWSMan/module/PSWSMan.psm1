@@ -31,7 +31,7 @@ class X509CertificateChainAttribute : ArgumentTransformationAttribute {
     }
 }
 
-Function exec {
+Function pswsman_exec {
     <#
     .SYNOPSIS
     Wraps a native exec call and output as separate streams for manual handling
@@ -163,7 +163,7 @@ Function Get-MacOSOpenSSL {
 
         # OpenSSL can be installed under a few different names
         foreach ($package in @('openssl', 'openssl@3', 'openssl@1.1')) {
-            $brewInfo = exec $brewPath --prefix $package
+            $brewInfo = pswsman_exec $brewPath --prefix $package
             $msg = "Attempting to get OpenSSL info with $brewPath --prefix $package`nSTDOUT: {0}`nSTDERR: {1}`nRC: {2}" -f (
                 $brewInfo.Stdout, $brewInfo.Stderr, $brewInfo.ExitCode)
             Write-Verbose -Message $msg
@@ -201,7 +201,7 @@ Function Get-MacOSOpenSSL {
         $portPath = $app.Path
 
         foreach ($package in @('openssl', 'openssl3', 'openssl11')) {
-            $portInfo = exec $portPath contents $package
+            $portInfo = pswsman_exec $portPath contents $package
             $msg = "Attempting to get OpenSSL info $portPath contents $package`nSTDERR: {0}`nRC: {1}" -f (
                 $portInfo.Stderr, $portInfo.ExitCode)
             Write-Verbose -Message $msg
@@ -310,7 +310,7 @@ Function Get-HostInfo {
         }
         catch [EntryPointNotFoundException] {
             # gnu_get_libc_version() is GLIBC, we fallback on a check to musl through ldd --version.
-            $libcInfo = exec ldd --version
+            $libcInfo = pswsman_exec ldd --version
             $libcVerbose = "Not glibc, checking musl with ldd --version:`nSTDOUT: {0}`nSTDERR: {1}`nRC: {2}" -f (
                 $libcInfo.Stdout, $libcInfo.Stderr, $libcInfo.ExitCode)
             Write-Verbose -Message $libcVerbose
@@ -688,7 +688,7 @@ Function Register-TrustedCertificate {
                 Copy-Item -LiteralPath $tempFile -Destination $destCertPath -Force
 
                 # The file must be executable
-                exec chmod 755 $destCertPath | Out-Null
+                pswsman_exec chmod 755 $destCertPath | Out-Null
 
                 # The command to run may contain argument, just use Invoke-Expression as the input is statically defined.
                 Write-Verbose -Message "Refreshing the trusted certificate directory with '$refreshCommand'"
