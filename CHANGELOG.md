@@ -3,7 +3,7 @@
 This is the changelog for this fork of OMI.
 It documents the changes in each of the tagged releases
 
-## 2.3.1 - TBD
+## 2.3.1 - 2022-11-28
 
 + Fix Kerberos auth with username but no password set
 + Fix `Install-WSMan` on PowerShell 7.3.x for macOS
